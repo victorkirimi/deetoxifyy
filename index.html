@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steady — A Recovery Companion</title>
+<style>
+  :root{
+    --ink: #1f2b27;
+    --paper: #f6f3ec;
+    --sage: #4a6b5c;
+    --sage-deep: #2e4a3d;
+    --clay: #c97b4a;
+    --mist: #d8e0da;
+    --line: rgba(31,43,39,0.14);
+    --display: 'Fraunces', Georgia, serif;
+    --body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    line-height:1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding: 48px 24px 80px;}
+
+  header.top{
+    display:flex; justify-content:space-between; align-items:baseline;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px; margin-bottom: 40px;
+    flex-wrap: wrap; gap:12px;
+  }
+  .wordmark{
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--sage-deep);
+  }
+  .tagline{font-family: var(--mono); font-size:12px; color: var(--ink); opacity:0.55; letter-spacing:0.02em;}
+
+  .hero{
+    display:grid;
+    grid-template-columns: 280px 1fr;
+    gap: 48px;
+    align-items:center;
+    margin-bottom: 56px;
+  }
+  @media (max-width: 720px){ .hero{grid-template-columns: 1fr; justify-items:center; text-align:center;} }
+
+  .ring-wrap{position:relative; width:240px; height:240px;}
+  svg.rings{width:100%; height:100%;}
+  .ring-center{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+  }
+  .ring-num{font-family: var(--display); font-size:52px; font-weight:600; color: var(--sage-deep); line-height:1;}
+  .ring-label{font-family: var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em; opacity:0.6; margin-top:6px;}
+
+  .hero-copy h1{
+    font-family: var(--display); font-weight:500; font-size: 34px;
+    line-height:1.15; color: var(--sage-deep); margin-bottom:14px;
+  }
+  .hero-copy p{font-size:15px; opacity:0.8; max-width: 44ch;}
+  .hero-actions{display:flex; gap:10px; margin-top:22px; flex-wrap:wrap;}
+  button{
+    font-family: var(--body); font-weight:600; font-size:13.5px;
+    padding: 11px 18px; border-radius: 8px; border:1px solid transparent;
+    cursor:pointer; transition: transform 0.12s ease, opacity 0.12s ease;
+  }
+  button:active{transform: scale(0.97);}
+  .btn-primary{background: var(--sage-deep); color: var(--paper);}
+  .btn-primary:hover{opacity:0.9;}
+  .btn-ghost{background:transparent; color: var(--sage-deep); border-color: var(--line);}
+  .btn-ghost:hover{background: var(--mist);}
+  .btn-danger{background:transparent; color:#9a4a2e; border-color: rgba(154,74,46,0.3); font-size:12.5px;}
+
+  section{margin-bottom: 48px;}
+  .section-head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:18px; border-bottom:1px solid var(--line); padding-bottom:10px;
+  }
+  .section-eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color: var(--clay);}
+  h2{font-family: var(--display); font-weight:500; font-size:21px; color: var(--sage-deep);}
+
+  .grid-2{display:grid; grid-template-columns: 1fr 1fr; gap:20px;}
+  @media (max-width:720px){.grid-2{grid-template-columns:1fr;}}
+
+  .card{
+    background: #fff; border:1px solid var(--line); border-radius:12px; padding:22px;
+  }
+
+  .checkin-row{display:flex; gap:8px; flex-wrap:wrap; margin: 14px 0;}
+  .pill{
+    font-family:var(--body); font-size:13px; padding:8px 14px; border-radius:999px;
+    border:1px solid var(--line); background: var(--paper); cursor:pointer; opacity:0.7;
+  }
+  .pill.selected{background: var(--sage); color:#fff; border-color: var(--sage); opacity:1;}
+
+  textarea{
+    width:100%; min-height:90px; resize:vertical; font-family: var(--body);
+    font-size:14px; padding:12px; border-radius:8px; border:1px solid var(--line);
+    background: var(--paper); color: var(--ink); margin-top:10px;
+  }
+  textarea:focus, .pill:focus, button:focus{outline:2px solid var(--clay); outline-offset:2px;}
+
+  .log-list{display:flex; flex-direction:column; gap:10px; margin-top:16px; max-height:280px; overflow-y:auto;}
+  .log-item{
+    border-left:3px solid var(--sage); background: var(--paper); padding:10px 14px; border-radius:0 8px 8px 0;
+  }
+  .log-meta{font-family:var(--mono); font-size:11px; opacity:0.55; margin-bottom:3px;}
+  .log-empty{font-size:13px; opacity:0.5; font-style:italic;}
+
+  .milestones{display:flex; gap:12px; flex-wrap:wrap;}
+  .milestone{
+    flex:1; min-width:120px; text-align:center; padding:16px 10px; border-radius:10px;
+    border:1px solid var(--line); background:#fff;
+  }
+  .milestone.hit{background: var(--sage-deep); border-color: var(--sage-deep);}
+  .milestone.hit .m-day, .milestone.hit .m-label{color: var(--paper);}
+  .m-day{font-family:var(--display); font-size:22px; font-weight:600; color: var(--sage-deep);}
+  .m-label{font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; opacity:0.6; margin-top:2px;}
+
+  footer{
+    border-top:1px solid var(--line); padding-top:24px; margin-top:20px;
+    font-size:13px; opacity:0.85;
+  }
+  footer .crisis{
+    background: #fdf2ec; border:1px solid rgba(201,123,74,0.35); border-radius:10px;
+    padding:16px 18px; margin-bottom:16px;
+  }
+  footer .crisis b{color:#9a4a2e;}
+  footer .fine{font-family:var(--mono); font-size:11px; opacity:0.5; margin-top:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="wordmark">Steady</div>
+    <div class="tagline">a day-by-day companion for staying on track</div>
+  </header>
+
+  <div class="hero">
+    <div class="ring-wrap">
+      <svg class="rings" viewBox="0 0 240 240">
+        <circle cx="120" cy="120" r="108" fill="none" stroke="#e4e0d4" stroke-width="10"/>
+        <circle id="progressRing" cx="120" cy="120" r="108" fill="none" stroke="#4a6b5c" stroke-width="10"
+          stroke-linecap="round" stroke-dasharray="678" stroke-dashoffset="678"
+          transform="rotate(-90 120 120)" style="transition: stroke-dashoffset 0.6s ease;"/>
+        <circle cx="120" cy="120" r="86" fill="none" stroke="#e4e0d4" stroke-width="1"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-num" id="dayCount">0</div>
+        <div class="ring-label">days steady</div>
+      </div>
+    </div>
+    <div class="hero-copy">
+      <h1>Every day logged is a day counted in your favor.</h1>
+      <p>Track your streak, check in honestly with how you're feeling, and keep a private record of what's working. This stays on your screen for this session only — nothing is uploaded anywhere.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="markToday()">Mark today complete</button>
+        <button class="btn-ghost" onclick="resetStreak()">Reset streak</button>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-head">
+      <h2>Today's check-in</h2>
+      <span class="section-eyebrow">how are you, right now</span>
+    </div>
+    <div class="card">
+      <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Craving intensity</div>
+      <div class="checkin-row" id="cravingPills">
+        <div class="pill" data-val="none">none</div>
+        <div class="pill" data-val="mild">mild</div>
+        <div class="pill" data-val="moderate">moderate</div>
+        <div class="pill" data-val="strong">strong</div>
+      </div>
+      <div style="font-size:13px; font-weight:600; margin:14px 0 6px;">Mood</div>
+      <div class="checkin-row" id="moodPills">
+        <div class="pill" data-val="good">good</div>
+        <div class="pill" data-val="okay">okay</div>
+        <div class="pill" data-val="low">low</div>
+        <div class="pill" data-val="anxious">anxious</div>
+      </div>
+      <textarea id="noteInput" placeholder="Anything on your mind — a trigger, a win, a thought worth keeping..."></textarea>
+      <button class="btn-primary" style="margin-top:12px;" onclick="saveCheckin()">Save check-in</button>
+    </div>
+  </section>
+
+  <div class="grid-2">
+    <section style="margin-bottom:0;">
+      <div class="section-head">
+        <h2>Milestones</h2>
+        <span class="section-eyebrow">progress markers</span>
+      </div>
+      <div class="milestones" id="milestoneList"></div>
+    </section>
+
+    <section style="margin-bottom:0;">
+      <div class="section-head">
+        <h2>Your log</h2>
+        <span class="section-eyebrow">recent entries</span>
+      </div>
+      <div class="card">
+        <div class="log-list" id="logList">
+          <div class="log-empty">No entries yet — your first check-in will show up here.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="crisis">
+      <b>Kenya support contacts:</b> NACADA (National Authority for the Campaign Against Alcohol and Drug Abuse) runs a free 24/7 helpline — dial <b>1192</b> from any Safaricom or Telkom line for telephone counseling and referrals to an accredited center, or email help@nacada.go.ke. Kenya Red Cross also runs a toll-free line on <b>1199</b>. A few NACADA-accredited treatment centers: Nairobi Place Addiction Treatment Centre, Nairobi — 020 267 9839 / 0735 550 000; Comfort Care 360, Lavington, Nairobi — 0700 705 487; Fountain of Hope Rehab, Syokimau — 0796 656 300. Centers, numbers, and accreditation status change, so confirm details against NACADA's current list at nacada.go.ke before publishing or relying on them. Outside Kenya, search "crisis helpline" plus your country. This tool is a tracking aid, not a substitute for medical or professional support — withdrawal from some substances can be medically serious, so please involve a doctor or accredited treatment provider for the detox process itself.
+    </div>
+    <div class="fine">Demo build — all data lives in this browser tab only and clears on refresh. Wire this up to a real backend (Supabase, Firebase) before using it day to day.</div>
+  </footer>
+
+</div>
+
+<script>
+let streak = 0;
+let lastMarked = null;
+let entries = [];
+let selectedCraving = null;
+let selectedMood = null;
+
+const milestoneSteps = [1, 7, 30, 90, 365];
+
+function setupPills(containerId, onSelect){
+  const container = document.getElementById(containerId);
+  container.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      container.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+      pill.classList.add('selected');
+      onSelect(pill.dataset.val);
+    });
+  });
+}
+setupPills('cravingPills', v => selectedCraving = v);
+setupPills('moodPills', v => selectedMood = v);
+
+function updateRing(){
+  const circumference = 678;
+  const target = Math.min(streak, 90);
+  const pct = target / 90;
+  const offset = circumference - (pct * circumference);
+  document.getElementById('progressRing').style.strokeDashoffset = offset;
+  document.getElementById('dayCount').textContent = streak;
+}
+
+function renderMilestones(){
+  const list = document.getElementById('milestoneList');
+  list.innerHTML = '';
+  milestoneSteps.forEach(day => {
+    const hit = streak >= day;
+    const div = document.createElement('div');
+    div.className = 'milestone' + (hit ? ' hit' : '');
+    div.innerHTML = `<div class="m-day">${day}</div><div class="m-label">${day === 1 ? 'day' : 'days'}</div>`;
+    list.appendChild(div);
+  });
+}
+
+function markToday(){
+  streak += 1;
+  updateRing();
+  renderMilestones();
+}
+
+function resetStreak(){
+  if(confirm('Reset your streak back to zero? Your log entries will stay.')){
+    streak = 0;
+    updateRing();
+    renderMilestones();
+  }
+}
+
+function saveCheckin(){
+  const note = document.getElementById('noteInput').value.trim();
+  if(!selectedCraving && !selectedMood && !note){
+    alert('Pick at least one option or add a note before saving.');
+    return;
+  }
+  const entry = {
+    time: new Date().toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}),
+    craving: selectedCraving,
+    mood: selectedMood,
+    note: note
+  };
+  entries.unshift(entry);
+  renderLog();
+
+  document.getElementById('noteInput').value = '';
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+  selectedCraving = null;
+  selectedMood = null;
+}
+
+function renderLog(){
+  const list = document.getElementById('logList');
+  if(entries.length === 0){
+    list.innerHTML = '<div class="log-empty">No entries yet — your first check-in will show up here.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  entries.forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'log-item';
+    const tags = [e.craving ? `craving: ${e.craving}` : null, e.mood ? `mood: ${e.mood}` : null].filter(Boolean).join(' · ');
+    div.innerHTML = `<div class="log-meta">${e.time}${tags ? ' · ' + tags : ''}</div>${e.note ? `<div>${escapeHtml(e.note)}</div>` : ''}`;
+    list.appendChild(div);
+  });
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+updateRing();
+renderMilestones();
+</script>
+
+</body>
+</html>
